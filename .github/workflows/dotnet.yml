@@ -21,7 +21,7 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build JornadaMilhas-API.sln --no-restore
 
     - name: Execução do teste de unidade 
       run: dotnet test ./test/JornadaMilhas.Integration.Test.API
