@@ -18,7 +18,7 @@ jobs:
         dotnet-version: 8.0.x
         
     - name: Restore dependencies # Baixa todas as dependências do projeto definidas no .csproj ou packages.config.
-      run: dotnet restore
+      run: dotnet restore JornadaMilhas-API.sln
       
     - name: Build
       run: dotnet build JornadaMilhas-API.sln --no-restore
