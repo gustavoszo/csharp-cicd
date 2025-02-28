@@ -1,0 +1,30 @@
+name: Pipeline .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout reposiório
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies # Baixa todas as dependências do projeto definidas no .csproj ou packages.config.
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Execução do teste de unidade 
+      run: dotnet test ./test/JornadaMilhas.Integration.Test.API
+      
+    - name: Publicando a API
+      run: dotnet publish ./src/JornadaMilhas.API
