@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{E8A624ED-A2F5-4146-9A29-FE6AA47AE972}"
 	ProjectSection(SolutionItems) = preProject
 		script.bat = script.bat
+		script.yml = script.yml
 	EndProjectSection
 EndProject
 Global
