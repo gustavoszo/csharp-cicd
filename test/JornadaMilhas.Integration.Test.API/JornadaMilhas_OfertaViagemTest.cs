@@ -44,7 +44,6 @@ namespace JornadaMilhas.Integration.Test.API
             Assert.Equal(ofertaExistente.Preco, response.Preco, 0.001);
             Assert.Equal(ofertaExistente.Rota.Origem, response.Rota.Origem);
             Assert.Equal(ofertaExistente.Rota.Destino, response.Rota.Destino);
-            Assert.Fail();
         }
 
         [Fact]
