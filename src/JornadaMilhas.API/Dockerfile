@@ -1,27 +1,30 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Etapa de build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
-WORKDIR /app
+ARG BUILD_CONFIGURATION=Release
 EXPOSE 8080
 EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["src/JornadaMilhas.API/JornadaMilhas.API.csproj", "src/JornadaMilhas.API/"]
-COPY ["src/JornadaMilhas.Dados/JornadaMilhas.Dados.csproj", "src/JornadaMilhas.Dados/"]
-COPY ["src/JornadaMilhas.Dominio/JornadaMilhas.Dominio.csproj", "src/JornadaMilhas.Dominio/"]
-RUN dotnet restore "./src/JornadaMilhas.API/./JornadaMilhas.API.csproj"
+WORKDIR /app/src
+
+# Copia apenas os arquivos de projeto para otimizar cache
+COPY ["JornadaMilhas.API/JornadaMilhas.API.csproj", "JornadaMilhas.API/"]
+COPY ["JornadaMilhas.Dados/JornadaMilhas.Dados.csproj", "JornadaMilhas.Dados/"]
+COPY ["JornadaMilhas.Dominio/JornadaMilhas.Dominio.csproj", "JornadaMilhas.Dominio/"]
+COPY "JornadaMilhas-API.sln" .
+
+# Restaura dependências
+RUN dotnet restore "JornadaMilhas-API.sln"
+
+# Copia o restante do código
 COPY . .
-WORKDIR "/src/src/JornadaMilhas.API"
-RUN dotnet build "./JornadaMilhas.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./JornadaMilhas.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Compila e publica a aplicação
+WORKDIR /app/src/JornadaMilhas.API
+RUN dotnet publish "JornadaMilhas.API.csproj" -c $BUILD_CONFIGURATION -o /app/out /p:UseAppHost=false
 
-FROM base AS final
+# Imagem final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "JornadaMilhas.API.dll"]
